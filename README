@@ -11,7 +11,7 @@
    build it like this:
    
        $ make
-	   gcc oscenum.c -llo -o oscenum
+       gcc oscenum.c -llo -o oscenum
 
    use it like this:
 
