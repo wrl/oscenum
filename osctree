@@ -6,10 +6,23 @@ usage()
 	echo "    display a tree of available OSC methods at <host>:<port> under <path>"
 }
 
+#
+# sanity checks
+#
+
+[ ! -f ./oscenum ] && {
+	echo "hey man you've gotta compile oscenum first (read the README)";
+	exit 1;
+}
+
 [ $# -lt 3 ] && {
 	usage
 	exit 1
 }
+
+#
+# things
+#
 
 host=$1
 port=$2
