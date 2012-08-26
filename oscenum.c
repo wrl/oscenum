@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2012 William Light <wrl@illest.net>
+ *
+ * This program is free software. It comes without any warranty, to
+ * the extent permitted by applicable law. You can redistribute it
+ * and/or modify it under the terms of the Do What The Fuck You Want
+ * To Public License, Version 2, as published by Sam Hocevar. See
+ * http://sam.zoy.org/wtfpl/COPYING for more details.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -13,6 +23,10 @@ OSC_HANDLER_FUNC(enum_reply)
 {
 	int i;
 
+	/* we receive a reply at the path "#reply". it will have 1 or more
+	   string arguments, with the first being the path we sent in the
+	   original message. we iterate along the rest of the arguments
+	   (which are the sub-paths) and print them out. */
 	for (i = 1; i < argc; i++)
 		printf("%s%s\n", &argv[0]->s, &argv[i]->s);
 
@@ -32,6 +46,7 @@ static char *get_enum_path(char *path)
 	char *buf;
 	int len = strlen(path);
 
+	/* if there's no trailing slash, add one. */
 	if (path[len - 1] != '/') {
 		buf = malloc(len + 1);
 		strncpy(buf, path, len);
@@ -68,6 +83,9 @@ int main(int argc, char **argv)
 	path = get_enum_path(argv[3]);
 	lo_send_from(out, srv, LO_TT_IMMEDIATE, path, "");
 
+	/* wait 1 second for a reply from the server. if we don't get one, then
+	   either there's no server at this host:port combination, or the server
+	   doesn't support this enumeration call. */
 	if (!lo_server_recv_noblock(srv, 1000))
 		fprintf(stderr, "no response from the OSC server.\n");
 
