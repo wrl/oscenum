@@ -1,0 +1,31 @@
+#!/bin/sh
+
+usage()
+{
+	echo "usage: osctree <host> <port> <path>"
+	echo "    display a tree of available OSC methods at <host>:<port> under <path>"
+}
+
+[ $# -lt 3 ] && {
+	usage
+	exit 1
+}
+
+host=$1
+port=$2
+basepath=$3
+
+enum()
+{
+	PATHS=`./oscenum $host $port $1`
+	[ "$PATHS" = "" ] && return 0;
+
+	for PATH in $PATHS; do
+		enum $PATH && echo $PATH;
+	done;
+
+	return 1;
+}
+
+enum $basepath;
+exit 0;

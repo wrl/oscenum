@@ -1,0 +1,69 @@
+
+  ,---.,---.,---.,---.,---..   .,-.-.
+  |   |`---.|    |---'|   ||   || | |
+  `---'`---'`---'`---'`   '`---'` ' '
+  
+   oscenum is a small tool for querying liblo-based
+   OSC servers about their registered methods.
+
+   you need liblo installed to compile it.
+
+   build it like this:
+   
+       $ make
+	   gcc oscenum.c -llo -o oscenum
+
+   use it like this:
+
+       $ ./oscenum localhost 19094 /monome
+       /monome/grid
+       /monome/ring
+       /monome/tilt
+
+   pretty cool! also included is osctree, a shell script
+   for querying all of the sub-paths of an oscenum call.
+
+       $ ./osctree localhost 19094 /monome
+       /monome/grid/led/set
+       /monome/grid/led/all
+       /monome/grid/led/map
+       /monome/grid/led/col
+       /monome/grid/led/row
+       /monome/grid/led/intensity
+       /monome/grid/led/level/set
+       /monome/grid/led/level/all
+       /monome/grid/led/level/map
+       /monome/grid/led/level/col
+       /monome/grid/led/level/row
+       /monome/ring/set
+       /monome/ring/all
+       /monome/ring/map
+       /monome/ring/range
+       /monome/tilt/set
+
+   dang, cuz.
+
+   as far as i know, this is functionality that is only
+   supported by liblo servers using the built-in
+   lo_server_add_method() call for dispatching OSC paths.
+
+   under the hood deets:
+   sending a liblo server an OSC message with a trailing
+   slash (like "/monome/") will generate a "#reply" message
+   with all of the sub-paths attached as string arguments.
+
+   so, for example, the above ./oscenum /monome call results
+   in a message like "#reply ssss /monome grid ring tilt".
+
+   the reason we need a custom program to send this is
+   because the initial enumeration call must be sent from
+   the port at which the #reply is to be received. liblo
+   makes this easy and i know the API pretty well so this
+   was a quick hack.
+
+   you'll note that we don't get the typetag signatures for
+   the methods, which is a pity. still, partial introspection
+   is better than no introspection.
+
+                                           holla atcha boy
+                                            wrl@illest.net
